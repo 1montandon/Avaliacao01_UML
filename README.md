@@ -58,14 +58,52 @@ npx tsx Projeto2.ts
 checkIn criado para os hospedes :Eduardo, Mariana no hotel Hotel Paraíso, no quarto quarto 101, no andar 1 
 2500.00
 3000.00
-Hotel { nome: 'Hotel Paraíso' }
-Quarto { numero: 101, andar: 1, hotel: Hotel { nome: 'Hotel Paraíso' } }
-Funcionario { nome: 'Carlos', salario: 3000, cargo: Cargo { nome: 'Recepcionista', funcionarios: [Circular *1] } }
-Hospede { nome: 'Eduardo', endereco: 'Rua das Palmeiras, 120', documento: '123.456.789-00' }
+<ref *1> Hotel {
+  nome: 'Hotel Paraíso',
+  quartos: [
+    Quarto { numero: 101, andar: 1, hotel: [Circular *1] },
+    Quarto { numero: 102, andar: 1, hotel: [Circular *1] },
+    Quarto { numero: 201, andar: 2, hotel: [Circular *1] }
+  ]
+}
+<ref *1> Quarto {
+  numero: 101,
+  andar: 1,
+  hotel: Hotel {
+    nome: 'Hotel Paraíso',
+    quartos: [ [Circular *1], [Quarto], [Quarto] ]
+  }
+}
+<ref *1> Funcionario {
+  nome: 'Carlos',
+  salario: 3000,
+  cargo: Cargo { nome: 'Recepcionista', funcionarios: [ [Circular *1] ] }
+}
+Hospede {
+  nome: 'Eduardo',
+  endereco: 'Rua das Palmeiras, 120',
+  documento: '123.456.789-00'
+}
 Reserva {
   dataEntrada: '10/04/2026',
   dataSaida: '15/04/2026',
-  quarto: Quarto { numero: 101, andar: 1, hotel: Hotel { nome: 'Hotel Paraíso' } }
+  quarto: Quarto {
+    numero: 101,
+    andar: 1,
+    hotel: Hotel { nome: 'Hotel Paraíso', quartos: [Array] }
+  },
+  hospedes: [
+    Hospede {
+      nome: 'Eduardo',
+      endereco: 'Rua das Palmeiras, 120',
+      documento: '123.456.789-00'
+    },
+    Hospede {
+      nome: 'Mariana',
+      endereco: 'Av. Central, 450',
+      documento: '987.654.321-00'
+    }
+  ]
 }
 ```
 
