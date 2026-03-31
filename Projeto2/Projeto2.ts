@@ -53,13 +53,19 @@ class Cargo {
 
 class Hotel {
   private nome: string;
+  private quartos: Quarto[] = [];
 
-  constructor(nome: string) {
+  constructor(nome: string, quartos: Quarto[]) {
     this.nome = nome;
+    this.quartos = quartos;
   }
 
   getNome(): string {
     return this.nome;
+  }
+
+  adicionarQuarto(quarto: Quarto) {
+    this.quartos.push(quarto);
   }
 }
 
@@ -96,6 +102,7 @@ class Reserva {
   private dataEntrada: string;
   private dataSaida: string;
   private quarto: Quarto;
+  private hospedes: Hospede[] = [];
 
   constructor(dataEntrada: string, dataSaida: string, quarto: Quarto) {
     this.dataEntrada = dataEntrada;
@@ -104,6 +111,9 @@ class Reserva {
   }
 
   checkIn(h: Hospede[]): void {
+    h.forEach((hospede) => {
+      this.hospedes.push(hospede);
+    });
     console.log(
       "checkIn criado para os hospedes :" +
         h.map((hospede) => hospede.getNome()).join(", ") +
@@ -120,11 +130,14 @@ class Reserva {
   }
 }
 
-const hotel = new Hotel("Hotel Paraíso");
+const hotel = new Hotel("Hotel Paraíso", []);
 
 const quarto101 = new Quarto(101, 1, hotel);
+hotel.adicionarQuarto(quarto101);
 const quarto102 = new Quarto(102, 1, hotel);
+hotel.adicionarQuarto(quarto102);
 const quarto201 = new Quarto(201, 2, hotel);
+hotel.adicionarQuarto(quarto201);
 
 const cargoRecepcionista = new Cargo("Recepcionista");
 const cargoGerente = new Cargo("Gerente");
