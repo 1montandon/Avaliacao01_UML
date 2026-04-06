@@ -1,4 +1,4 @@
-class Pessoa {
+export class Pessoa {
   private nome: string;
 
   constructor(nome: string) {
@@ -10,7 +10,7 @@ class Pessoa {
   }
 }
 
-class Hospede extends Pessoa {
+export class Hospede extends Pessoa {
   private endereco: string;
   private documento: string;
 
@@ -20,7 +20,7 @@ class Hospede extends Pessoa {
   }
 }
 
-class Funcionario extends Pessoa {
+export class Funcionario extends Pessoa {
   private salario: number;
   private cargo: Cargo;
 
@@ -38,7 +38,8 @@ class Funcionario extends Pessoa {
     return this.salario.toFixed(2);
   }
 }
-class Cargo {
+
+export class Cargo {
   private nome: string;
   private funcionarios: Funcionario[] = [];
 
@@ -51,7 +52,7 @@ class Cargo {
   }
 }
 
-class Hotel {
+export class Hotel {
   private nome: string;
   private quartos: Quarto[] = [];
 
@@ -67,9 +68,36 @@ class Hotel {
   adicionarQuarto(quarto: Quarto) {
     this.quartos.push(quarto);
   }
+  adicionarQuartos(quartos: Quarto[]): void {
+    quartos.forEach((quarto) => {
+      this.quartos.push(quarto);
+    });
+  }
+  getQuarto(andar: number, numero: number): Quarto {
+    const quarto = this.quartos.find(
+      (q) => q.getAndar() === andar && q.getNumero() === numero,
+    );
+
+    if (!quarto) {
+      throw new Error(`Quarto ${numero} no andar ${andar} não encontrado`);
+    }
+
+    return quarto;
+  }
+  getQuartos(): Record<string, Quarto[]> {
+    const quartosPorAndar: Record<string, Quarto[]> = {};
+    this.quartos.forEach((quarto) => {
+      const andar = String(quarto.getAndar());
+      if (!quartosPorAndar[andar]) {
+        quartosPorAndar[andar] = [];
+      }
+      quartosPorAndar[andar].push(quarto);
+    });
+    return quartosPorAndar;
+  }
 }
 
-class Quarto {
+export class Quarto {
   private numero: number;
   private andar: number;
   private hotel: Hotel;
@@ -93,12 +121,19 @@ class Quarto {
     return this.hotel.getNome();
   }
 
+  getAndar(): number {
+    return this.andar;
+  }
+  getNumero(): number {
+    return this.numero;
+  }
+
   getQuarto(): string {
     return `quarto ${this.numero}, no andar ${this.andar}`;
   }
 }
 
-class Reserva {
+export class Reserva {
   private dataEntrada: string;
   private dataSaida: string;
   private quarto: Quarto;
@@ -111,63 +146,73 @@ class Reserva {
   }
 
   checkIn(h: Hospede[]): void {
-    h.forEach((hospede) => {
-      this.hospedes.push(hospede);
-    });
+    this.hospedes.push(...h);
     console.log(
-      "checkIn criado para os hospedes :" +
+      "Check-in criado para os hospedes: " +
         h.map((hospede) => hospede.getNome()).join(", ") +
-        ` no hotel ${this.quarto.getHotel()}, no quarto ${this.quarto.getQuarto()} `,
+        ` no hotel ${this.quarto.getHotel()}, no quarto ${this.quarto.getQuarto()}, de ${this.dataEntrada} ate ${this.dataSaida}.`,
     );
   }
 
   checkOut(): void {
-    console.log("chekOut");
+    console.log(
+      `Check-out realizado no quarto ${this.quarto.getQuarto()} para o periodo de ${this.dataEntrada} ate ${this.dataSaida}.`,
+    );
+    this.hospedes = [];
   }
 
   cancelar(): void {
-    console.log("canselado");
+    console.log(
+      `Reserva cancelada no quarto ${this.quarto.getQuarto()} para o periodo de ${this.dataEntrada} ate ${this.dataSaida}.`,
+    );
+    this.hospedes = [];
   }
 }
 
-const hotel = new Hotel("Hotel Paraíso", []);
+// Testes das Classes - Comentados
 
-const quarto101 = new Quarto(101, 1, hotel);
-hotel.adicionarQuarto(quarto101);
-const quarto102 = new Quarto(102, 1, hotel);
-hotel.adicionarQuarto(quarto102);
-const quarto201 = new Quarto(201, 2, hotel);
-hotel.adicionarQuarto(quarto201);
+// const hotel = new Hotel("Hotel Paraíso", []);
 
-const cargoRecepcionista = new Cargo("Recepcionista");
-const cargoGerente = new Cargo("Gerente");
+// const quartos = [
+//   new Quarto(101, 1, hotel),
+//   new Quarto(102, 1, hotel),
+//   new Quarto(201, 2, hotel),
+//   new Quarto(202, 2, hotel),
+// ];
 
-const funcionario1 = new Funcionario("Carlos", 2500, cargoRecepcionista);
-const funcionario2 = new Funcionario("Ana", 4500, cargoGerente);
+// hotel.adicionarQuartos(quartos);
 
-cargoRecepcionista.adicionarFuncionario(funcionario1);
-cargoGerente.adicionarFuncionario(funcionario2);
+// const cargoRecepcionista = new Cargo("Recepcionista");
+// const cargoGerente = new Cargo("Gerente");
 
-const hospede1 = new Hospede(
-  "Eduardo",
-  "Rua das Palmeiras, 120",
-  "123.456.789-00",
-);
+// const funcionario1 = new Funcionario("Carlos", 2500, cargoRecepcionista);
+// const funcionario2 = new Funcionario("Ana", 4500, cargoGerente);
 
-const hospede2 = new Hospede("Mariana", "Av. Central, 450", "987.654.321-00");
+// cargoRecepcionista.adicionarFuncionario(funcionario1);
+// cargoGerente.adicionarFuncionario(funcionario2);
 
-const reserva1 = new Reserva("10/04/2026", "15/04/2026", quarto101);
+// const hospede1 = new Hospede(
+//   "Eduardo",
+//   "Rua das Palmeiras, 120",
+//   "123.456.789-00",
+// );
+// const hospede2 = new Hospede("Mariana", "Av. Central, 450", "987.654.321-00");
 
-reserva1.checkIn([hospede1, hospede2]);
+// const quartoReserva = hotel.getQuarto(1, 101);
+// const reserva1 = new Reserva("10/04/2026", "15/04/2026", quartoReserva);
 
-console.log(funcionario1.getSalario()); // 2500.00
+// reserva1.checkIn([hospede1, hospede2]);
 
-funcionario1.mudarSalario(3000);
+// console.log("Salário inicial:", funcionario1.getSalario()); // 2500.00
+// funcionario1.mudarSalario(3000);
+// console.log("Salário reajustado:", funcionario1.getSalario()); // 3000.00
 
-console.log(funcionario1.getSalario()); // 3000.00
+// console.log("Quartos por andar:", hotel.getQuartos());
 
-console.log(hotel);
-console.log(quarto101);
-console.log(funcionario1);
-console.log(hospede1);
-console.log(reserva1);
+// reserva1.checkOut();
+
+// console.log(hotel);
+// console.log(quartoReserva);
+// console.log(funcionario1);
+// console.log(hospede1);
+// console.log(reserva1);
